@@ -24,7 +24,8 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
         //even if there was a cycle that pointed back to the root
         //Look to discuss in code review, if this is a desired behavior we can simply inline
         //the call to the recursive method and forgo the var here.
-        Set<String> reports = getReportsRecursive(new HashSet<>(), employee, true);
+        Set<String> reports = new HashSet<>();
+        getReportsRecursive(reports, employee, true);
         reports.remove(employeeId);
 
         reportingStructure.setEmployee(employee);
@@ -33,7 +34,7 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
         return reportingStructure;
     }
 
-    private Set<String> getReportsRecursive(Set<String> employeeIDs, Employee current, Boolean isRoot) {
+    private void getReportsRecursive(Set<String> employeeIDs, Employee current, Boolean isRoot) {
 
         String currentEmployeeId = current.getEmployeeId();
 
@@ -51,17 +52,14 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
 
             if(currentDirectReports != null) {
                 currentDirectReports.forEach(report ->
-                        employeeIDs.addAll(
                                 getReportsRecursive(
                                         employeeIDs,
                                         employeeRepository.findByEmployeeId(report.getEmployeeId()),
                                         false
                                 )
-                        )
                 );
             }
         }
-        return employeeIDs;
     }
 
 }
