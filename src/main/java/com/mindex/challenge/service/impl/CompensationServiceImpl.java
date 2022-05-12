@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 @Service
 public class CompensationServiceImpl implements CompensationService {
 
@@ -27,6 +31,8 @@ public class CompensationServiceImpl implements CompensationService {
     public Compensation[] read(String employeeId) {
         LOG.debug("Reading compensations for employee with ID [{}]", employeeId);
 
-        return compensationRepository.findByEmployeeEmployeeId(employeeId);
+        return Arrays.stream(compensationRepository.findByEmployeeEmployeeId(employeeId))
+                .sorted(Comparator.comparing(Compensation::getEffectiveDate))
+                .toArray(Compensation[]::new);
     }
 }
