@@ -51,12 +51,15 @@ public class EmployeeServiceImplTest {
         // Create checks
         Employee createdEmployee = restTemplate.postForEntity(employeeUrl, testEmployee, Employee.class).getBody();
 
+        assert createdEmployee != null;
         assertNotNull(createdEmployee.getEmployeeId());
         assertEmployeeEquivalence(testEmployee, createdEmployee);
 
 
         // Read checks
         Employee readEmployee = restTemplate.getForEntity(employeeIdUrl, Employee.class, createdEmployee.getEmployeeId()).getBody();
+
+        assert readEmployee != null;
         assertEquals(createdEmployee.getEmployeeId(), readEmployee.getEmployeeId());
         assertEmployeeEquivalence(createdEmployee, readEmployee);
 
@@ -70,10 +73,11 @@ public class EmployeeServiceImplTest {
         Employee updatedEmployee =
                 restTemplate.exchange(employeeIdUrl,
                         HttpMethod.PUT,
-                        new HttpEntity<Employee>(readEmployee, headers),
+                        new HttpEntity<>(readEmployee, headers),
                         Employee.class,
                         readEmployee.getEmployeeId()).getBody();
 
+        assert updatedEmployee != null;
         assertEmployeeEquivalence(readEmployee, updatedEmployee);
     }
 

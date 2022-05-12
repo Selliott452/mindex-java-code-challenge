@@ -3,6 +3,7 @@ package com.mindex.challenge.service.impl;
 import com.mindex.challenge.data.Compensation;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.service.CompensationService;
+import com.mindex.challenge.service.EmployeeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -28,6 +30,9 @@ public class CompensationServiceImplTest {
 
     @Autowired
     private CompensationService compensationService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @LocalServerPort
     private int port;
@@ -44,7 +49,7 @@ public class CompensationServiceImplTest {
     @Test
     public void testCreateRead() {
         //Given a set of two compensations associated to the same employee
-        Employee testEmployee = getTestEmployee();
+        Employee testEmployee = employeeService.create(getTestEmployee());
         Compensation testCompensation1 = getTestCompensation(testEmployee);
         Compensation testCompensation2 = getTestCompensation(testEmployee);
 
@@ -67,12 +72,12 @@ public class CompensationServiceImplTest {
         Objects.requireNonNull(retrievedCompensations);
 
         //And the response contains the previously posted compensations
-        assert(retrievedCompensations.length == 2);
+        assert (retrievedCompensations.length == 2);
 
-        assert(Arrays.asList(retrievedCompensations)
-                        .contains(savedTestCompensation1));
+        assert (Arrays.asList(retrievedCompensations)
+                .contains(savedTestCompensation1));
 
-        assert(Arrays.asList(retrievedCompensations)
+        assert (Arrays.asList(retrievedCompensations)
                 .contains(savedTestCompensation2));
     }
 
@@ -90,7 +95,7 @@ public class CompensationServiceImplTest {
         Compensation testCompensation = new Compensation();
         testCompensation.setEmployee(employee);
         testCompensation.setSalary(BigDecimal.valueOf(Math.random()));
-        testCompensation.setEffectiveDate(LocalDateTime.now());
+        testCompensation.setEffectiveDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
         return testCompensation;
     }
